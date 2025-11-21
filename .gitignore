@@ -1,8 +1,5 @@
 notepad .gitignore
-```
-
-Cole este conteúdo:
-```
+``` 
 # Python
 __pycache__/
 *.py[cod]
@@ -15,6 +12,8 @@ ENV/
 *.egg-info/
 dist/
 build/
+backend/
+*.py
 
 # Jupyter Notebook
 .ipynb_checkpoints
