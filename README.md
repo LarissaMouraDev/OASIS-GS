@@ -1,7 +1,9 @@
 # 🌊 OÁSÎS - Equilíbrio Híbrido Inteligente
 
 **Intelligent Hybrid Balance for Corporate Wellbeing**
-
+Integrantes: 
+Larissa de Freitas Moura-555136
+Guilherme Francisco-557648
 ---
 
 ## 📋 Índice
