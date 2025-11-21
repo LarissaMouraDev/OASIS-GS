@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OÁSÎS - Equilíbrio Híbrido Inteligente</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #008B8B, #20B2AA);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 4px 20px rgba(0,139,139,0.4);
+        }
+
+        .logo h1 {
+            font-size: 48px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #87CEEB, #008B8B);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #E0E7FF;
+            margin-top: 10px;
+        }
+
+        /* Main Card */
+        .main-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.8s ease;
+        }
+
+        /* Form Section */
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .form-section h2 {
+            color: #008B8B;
+            margin-bottom: 20px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #008B8B;
+            box-shadow: 0 0 0 3px rgba(0,139,139,0.1);
+        }
+
+        /* Button */
+        .btn-analyze {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #008B8B, #20B2AA);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0,139,139,0.3);
+        }
+
+        .btn-analyze:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0,139,139,0.4);
+        }
+
+        .btn-analyze:active {
+            transform: translateY(0);
+        }
+
+        /* Results Section */
+        .results {
+            display: none;
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 2px solid #E5E7EB;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .results.show {
+            display: block;
+        }
+
+        .score-display {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .score-circle {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+
+        .score-circle svg {
+            transform: rotate(-90deg);
+        }
+
+        .score-circle circle {
+            fill: none;
+            stroke-width: 15;
+        }
+
+        .score-circle .bg-circle {
+            stroke: #E5E7EB;
+        }
+
+        .score-circle .progress-circle {
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s ease, stroke 0.3s ease;
+        }
+
+        .score-value {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 48px;
+            font-weight: 700;
+        }
+
+        .score-label {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Status Colors */
+        .status-healthy { color: #10B981; }
+        .status-attention { color: #F59E0B; }
+        .status-risk { color: #EF4444; }
+        .status-critical { color: #DC2626; }
+
+        /* Recommendations */
+        .recommendations {
+            background: #F9FAFB;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .recommendations h3 {
+            color: #008B8B;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .recommendation-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #008B8B;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Loading */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #E5E7EB;
+            border-top: 4px solid #008B8B;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Confidence Badge */
+        .confidence-badge {
+            display: inline-block;
+            background: #EFF6FF;
+            color: #1E40AF;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .logo h1 {
+                font-size: 36px;
+            }
+            
+            .main-card {
+                padding: 25px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <img src="logo.svg" alt="OÁSÎS Logo" style="width: 60px; height: 60px;">
+                <h1>OÁSÎS</h1>
+            </div>
+            <p class="subtitle">Equilíbrio Híbrido Inteligente</p>
+        </div>
+
+        <!-- Main Card -->
+        <div class="main-card">
+            <!-- Form Section -->
+            <div class="form-section">
+                <h2>📊 Análise de Bem-Estar</h2>
+                
+                <form id="burnoutForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="userId">ID do Usuário</label>
+                            <input type="text" id="userId" value="maria_silva" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="hoursWorked">Horas Trabalhadas (por dia)</label>
+                            <input type="number" id="hoursWorked" min="0" max="24" step="0.5" value="10.5" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="meetingsCount">Número de Reuniões (por dia)</label>
+                            <input type="number" id="meetingsCount" min="0" max="20" value="9" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="timeBetweenBreaks">Tempo Entre Pausas (minutos)</label>
+                            <input type="number" id="timeBetweenBreaks" min="0" max="300" value="45" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="nightWork">Trabalho Noturno?</label>
+                            <select id="nightWork" required>
+                                <option value="true">Sim</option>
+                                <option value="false">Não</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="weekendWork">Trabalho em Fim de Semana?</label>
+                            <select id="weekendWork" required>
+                                <option value="true">Sim</option>
+                                <option value="false">Não</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="meetingDuration">Duração Média de Reuniões (minutos)</label>
+                            <input type="number" id="meetingDuration" min="0" max="180" value="60" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="meetingOverlap">Taxa de Sobreposição (0-1)</label>
+                            <input type="number" id="meetingOverlap" min="0" max="1" step="0.1" value="0.4" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="responseTime">Tempo de Resposta Fora do Horário (minutos)</label>
+                            <input type="number" id="responseTime" min="0" max="300" value="15" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-analyze">
+                        🔍 Analisar Risco de Burnout
+                    </button>
+                </form>
+            </div>
+
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analisando padrões de trabalho...</p>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results" id="results">
+                <h2 style="color: #008B8B; text-align: center; margin-bottom: 30px;">
+                    📈 Resultado da Análise
+                </h2>
+
+                <div class="score-display">
+                    <div class="score-circle">
+                        <svg width="200" height="200">
+                            <circle class="bg-circle" cx="100" cy="100" r="85"></circle>
+                            <circle id="progressCircle" class="progress-circle" cx="100" cy="100" r="85" 
+                                    stroke-dasharray="534" stroke-dashoffset="534"></circle>
+                        </svg>
+                        <div class="score-value" id="scoreValue">0</div>
+                    </div>
+                    <div class="score-label" id="scoreLabel">Calculando...</div>
+                    <div class="confidence-badge" id="confidenceBadge">
+                        Confiança: <span id="confidenceValue">0%</span>
+                    </div>
+                </div>
+
+                <div class="recommendations">
+                    <h3>💡 Recomendações Personalizadas</h3>
+                    <div id="recommendationsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:8000';
+
+        // Form submission
+        document.getElementById('burnoutForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Show loading
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('results').classList.remove('show');
+
+            // Get form data
+            const data = {
+                user_id: document.getElementById('userId').value,
+                hours_worked: parseFloat(document.getElementById('hoursWorked').value),
+                meetings_count: parseInt(document.getElementById('meetingsCount').value),
+                avg_time_between_breaks: parseFloat(document.getElementById('timeBetweenBreaks').value),
+                night_work: document.getElementById('nightWork').value === 'true',
+                weekend_work: document.getElementById('weekendWork').value === 'true',
+                avg_meeting_duration: parseFloat(document.getElementById('meetingDuration').value),
+                meeting_overlap_rate: parseFloat(document.getElementById('meetingOverlap').value),
+                response_time_after_hours: parseFloat(document.getElementById('responseTime').value)
+            };
+
+            try {
+                // Call API
+                const response = await fetch(`${API_URL}/api/ml/predict`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Erro na API');
+                }
+
+                const result = await response.json();
+
+                // Hide loading
+                setTimeout(() => {
+                    document.getElementById('loading').classList.remove('show');
+                    displayResults(result);
+                }, 1000);
+
+            } catch (error) {
+                console.error('Erro:', error);
+                document.getElementById('loading').classList.remove('show');
+                alert('Erro ao conectar com a API. Certifique-se de que o servidor está rodando.');
+            }
+        });
+
+        function displayResults(result) {
+            // Show results section
+            document.getElementById('results').classList.add('show');
+
+            // Animate score
+            animateScore(result.score);
+
+            // Set status
+            const statusClasses = {
+                'Saudável': 'status-healthy',
+                'Atenção': 'status-attention',
+                'Risco': 'status-risk',
+                'Crítico': 'status-critical'
+            };
+
+            const scoreLabel = document.getElementById('scoreLabel');
+            scoreLabel.textContent = result.status;
+            scoreLabel.className = 'score-label ' + statusClasses[result.status];
+
+            // Set confidence
+            document.getElementById('confidenceValue').textContent = 
+                Math.round(result.confidence * 100) + '%';
+
+            // Set circle color
+            const colors = {
+                'Saudável': '#10B981',
+                'Atenção': '#F59E0B',
+                'Risco': '#EF4444',
+                'Crítico': '#DC2626'
+            };
+            document.getElementById('progressCircle').style.stroke = colors[result.status];
+
+            // Display recommendations
+            const recList = document.getElementById('recommendationsList');
+            recList.innerHTML = result.recommendations
+                .map(rec => `<div class="recommendation-item">✓ ${rec}</div>`)
+                .join('');
+
+            // Scroll to results
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function animateScore(targetScore) {
+            const scoreValue = document.getElementById('scoreValue');
+            const progressCircle = document.getElementById('progressCircle');
+            const circumference = 534; // 2 * PI * 85
+            
+            let currentScore = 0;
+            const duration = 2000; // 2 seconds
+            const increment = targetScore / (duration / 16); // 60fps
+
+            const animation = setInterval(() => {
+                currentScore += increment;
+                
+                if (currentScore >= targetScore) {
+                    currentScore = targetScore;
+                    clearInterval(animation);
+                }
+
+                // Update score text
+                scoreValue.textContent = Math.round(currentScore);
+
+                // Update circle
+                const offset = circumference - (currentScore / 100) * circumference;
+                progressCircle.style.strokeDashoffset = offset;
+            }, 16);
+        }
+    </script>
+</body>
+</html>
