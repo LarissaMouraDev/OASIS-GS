@@ -1,11 +1,14 @@
 # 🌊 OÁSÎS - Equilíbrio Híbrido Inteligente
 
 **Intelligent Hybrid Balance for Corporate Wellbeing**
+
+-------------
 Integrantes: 
 Larissa de Freitas Moura-555136
 Guilherme Francisco-557648
 ---
-
+Link Do Swagger: http://localhost:8000/docs#/default/predict_burnout_api_ml_predict_post
+Link da Interface:http://127.0.0.1:5500/frontend/index.html
 ## 📋 Índice
 
 1. [Visão Geral](#visão-geral)
